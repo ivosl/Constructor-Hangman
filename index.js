@@ -1,23 +1,20 @@
-
-
+// dependency for inquirer npm package
 var inquirer = require('inquirer');
-
+// requiring the Word module exported from Word.js
 var Word = require('./Word.js');
 
-var Letter = require('./Letter.js');
-
-
 var gameOn = {
-    
+
+	// creating the wordbank
 	wordToGuess:["EGGPLANT", "TURNIP", "CUCUMBER", "CAULIFLOWER", "KALE", "BELL PEPPER"],
     
 	guessesLeft: 10,
-    
+    // this array will hold player's guesses
 	lettersGuessed: [], 
     
 	currentWord: null,
     
-    
+    // this function will prompt if player wants to start a new game
 	startGame: function(){  
         
 		var startGame = this;
@@ -55,7 +52,7 @@ var gameOn = {
 			console.log("\x1b[34mWhat is the name of the vegetable?\x1b[0m");
 			console.log(" ");
             
-            
+            // here we pick a random word from our list
 			var shufleWord = Math.floor(Math.random() * this.wordToGuess.length); //pick a random word from the word bank
             
 			this.currentWord = new Word (this.wordToGuess[shufleWord]);
@@ -81,7 +78,8 @@ var gameOn = {
 	nextGuess: function(){
         
 		var newGuess = this;
-        
+
+        // inquirer is asking for player's guess
 		inquirer.prompt([{ 
             
 			name: "guess",
@@ -89,7 +87,8 @@ var gameOn = {
 			message: "Guess a letter!",
             
 		}]).then(function(newLetter) {
-            
+			
+			// Since our words are all caps the guessed letter is stored and shown in all caps too
             var chooseLetter = (newLetter.guess).toUpperCase(); 
             
             var repeatGuess = false;
@@ -103,15 +102,17 @@ var gameOn = {
             }
             
             if(repeatGuess === false) {
-                
+                // adding the guessed letter to our array
                 newGuess.lettersGuessed.push(chooseLetter); 
                 
                 var letterLookup = newGuess.currentWord.checkLetter(chooseLetter);
                 
-                if(letterLookup === 0) { //if guess is wrong
+                if(letterLookup === 0) { 
                     
-                    console.log("\x1b[31mINCORECT\x1b[0m");
-                    newGuess.guessesLeft--; //take away a guess
+					console.log("\x1b[31mINCORECT\x1b[0m");
+					
+					//reducing the number of guesses by incrementing it by one after each wrong guess
+                    newGuess.guessesLeft--; 
                     
                     console.log(newGuess.guessesLeft + " guesses remaining!!!" );
                     console.log("Letters already guessed: " + "\x1b[34m" + newGuess.lettersGuessed + "\x1b[0m ");
@@ -146,7 +147,7 @@ var gameOn = {
                         
                     }
                 }
-                
+                // If no guesses left the this game ends
                 if(newGuess.guessesLeft > 0 && newGuess.currentWord.wordSelected === false) { 
                     
                     newGuess.nextGuess();
